@@ -1,0 +1,84 @@
+version: 2
+
+models:
+  - name: int_web_analytics_with_customers
+    description: >
+      Each row represents one website clickstream event enriched with the
+      placing customer's profile attributes. Grain: one row per event (event
+      grain is preserved from stg_web_analytics — no aggregation). This
+      intermediate model joins stg_web_analytics to stg_adventure_db__customers
+      via customer_id so downstream analysts can slice browsing behavior by
+      customer geography, demographics, or contact info without writing their
+      own joins. A LEFT JOIN is used so all events are preserved even when
+      customer_id does not match the customer dimension (the API can generate
+      IDs outside the known range — customer columns will be null in those cases).
+      Use this model to answer questions like "Which US customers viewed the most
+      product pages?" or "What is the add-to-cart rate by region?"
+    columns:
+      - name: customer_id
+        description: >
+          Identifier of the customer who performed this web event. Foreign key
+          to stg_adventure_db__customers.customer_id. Cast to VARCHAR in the
+          upstream staging model to ensure type-consistent joining.
+        data_tests:
+          - not_null
+      - name: session_id
+        description: >
+          Browser session identifier grouping events from a single website visit.
+          Multiple rows share the same session_id. Use to analyze visit-level
+          journeys and conversion funnels.
+        data_tests:
+          - not_null
+      - name: event_timestamp
+        description: >
+          UTC timestamp of when this event occurred. Primary time dimension —
+          use for time-series analysis of browsing behavior, session timing,
+          and funnel step durations.
+      - name: event_type
+        description: >
+          Type of website interaction. Values: page_view, click, add_to_cart,
+          purchase. Use to filter funnel stages or calculate conversion rates
+          between stages.
+      - name: page_url
+        description: >
+          Full URL of the page where this event occurred. Useful for identifying
+          high-traffic pages and which product or category pages lead to purchases.
+      - name: product_id
+        description: >
+          Product the customer interacted with during this event. Foreign key to
+          stg_adventure_db__products. Join to get product name, category, and
+          pricing for product-level web analytics.
+      - name: full_name
+        description: >
+          Customer's full display name, joined from stg_adventure_db__customers.
+          Null when customer_id does not match the customer dimension.
+      - name: first_name
+        description: Customer's first name from the customer dimension. Null if no match.
+      - name: last_name
+        description: Customer's last name from the customer dimension. Null if no match.
+      - name: email_address
+        description: >
+          Customer's email address from the customer dimension. Null if no match.
+          Can be used to link web behavior to email campaign events in
+          stg_ecom__email_campaigns.
+      - name: city
+        description: >
+          Customer's city from the customer dimension. Null if no match.
+          Use for geographic analysis of browsing behavior.
+      - name: state_province
+        description: Customer's state or province. Null if no match.
+      - name: country_region
+        description: >
+          Customer's country or region. Null if no match. Use for international
+          segmentation (e.g., "Which customers from the US have the highest
+          add-to-cart rate?").
+      - name: postal_code
+        description: Customer's postal code. Null if no match.
+      - name: _loaded_at
+        description: >
+          Timestamp when the raw event row was loaded into Snowflake by the
+          Prefect flow's COPY INTO command. Propagated from stg_web_analytics.
+      - name: dbt_loaded_at
+        description: >
+          Timestamp when dbt last materialized the upstream stg_web_analytics
+          staging table. Propagated for pipeline observability.

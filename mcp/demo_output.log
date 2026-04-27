@@ -1,0 +1,142 @@
+dbt MCP Demo Output - 2026-04-19T21:40:29.855473
+============================================================
+
+[21:40:23] ============================================================
+[21:40:23] dbt MCP Server Demo
+[21:40:23] ============================================================
+[21:40:23] 
+[21:40:23] Step 1: Connecting to dbt MCP server...
+[21:40:23]   Connected to: http://localhost:8000/sse
+[21:40:23]   Handshake complete.
+[21:40:23] 
+[21:40:23] Step 2: Listing available tools...
+[21:40:23]   - search_product_docs: Search the dbt product documentation at docs.getdbt.com for pages matching a query. Returns matching page titles, URLs, 
+[21:40:23]   - get_product_doc_pages: Retrieve the Markdown content of one or more dbt documentation pages from docs.getdbt.com. Pass a list of URLs or relati
+[21:40:23]   - build: The dbt build command will:
+
+- run models
+- test tests
+- snapshot snapshots
+- seed seeds
+
+In DAG order.
+
+[21:40:23]   - compile: dbt compile generates executable SQL from source model, test, and analysis files.
+
+The compile command is useful for vis
+[21:40:23]   - docs: The docs command is responsible for generating your project's documentation website.
+
+[21:40:23]   - list: List the resources in the your dbt project.
+
+[21:40:23]   - parse: The dbt parse command parses and validates the contents of your dbt project. If your project contains Jinja or YAML synt
+[21:40:23]   - run: dbt run executes compiled sql model files against the current target database. dbt connects to the target database and r
+[21:40:23]   - test: dbt test runs data tests defined on models, sources, snapshots, and seeds and unit tests defined on SQL models.
+[21:40:23]   - show: dbt show executes an arbitrary SQL statement against the database and returns the results. It is useful for debugging an
+[21:40:23]   - get_lineage_dev: get_lineage_dev
+
+<instructions>
+Retrieves the lineage of a specific dbt resource from the local development manifest. Re
+[21:40:23]   - get_node_details_dev: Retrieves detailed information about a specific dbt node from the local development manifest using `dbt ls --output json
+[21:40:23]   Total tools available: 12
+[21:40:23] 
+[21:40:23] Step 3: Discovering dbt models...
+[21:40:24]   adventure.staging.ecom.base.base_ecom__email_campaigns
+[21:40:24]   adventure.staging.ecom.base.base_ecom__email_mktg_new
+[21:40:24]   adventure.staging.ecom.base.base_ecom__sales_orders
+[21:40:24]   adventure.staging.real_time.base.base_real_time__sales_orders
+[21:40:24]   adventure.intermediate.int_sales_order_line_items
+[21:40:24]   adventure.intermediate.int_sales_order_with_customers
+[21:40:24]   adventure.intermediate.int_sales_orders_with_campaign
+[21:40:24]   adventure.intermediate.int_web_analytics_with_customers
+[21:40:24]   adventure.staging.adventure_db.stg_adventure_db__customers
+[21:40:24]   adventure.staging.adventure_db.stg_adventure_db__inventory
+[21:40:24]   adventure.staging.adventure_db.stg_adventure_db__product_vendors
+[21:40:24]   adventure.staging.adventure_db.stg_adventure_db__products
+[21:40:24]   adventure.staging.adventure_db.stg_adventure_db__vendors
+[21:40:24]   adventure.staging.ecom.stg_ecom__email_campaigns
+[21:40:24]   adventure.staging.ecom.stg_ecom__purchase_orders
+[21:40:24]   adventure.staging.ecom.stg_ecom__sales_orders
+[21:40:24]   adventure.staging.real_time.stg_real_time__chat_logs
+[21:40:24]   adventure.staging.web_analytics.stg_web_analytics
+[21:40:24] 
+[21:40:24] Step 4: Getting details for stg_web_analytics...
+[21:40:26]   {
+[21:40:26]     "unique_id": "model.adventure.stg_web_analytics",
+[21:40:26]     "name": "stg_web_analytics",
+[21:40:26]     "resource_type": "model",
+[21:40:26]     "package_name": "adventure",
+[21:40:26]     "original_file_path": "models-m2/staging/web_analytics/stg_web_analytics.sql",
+[21:40:26]     "path": "staging/web_analytics/stg_web_analytics.sql",
+[21:40:26]     "alias": "stg_web_analytics",
+[21:40:26]     "description": "Each row represents one clickstream event from the Adventure Works website, sourced from the REST API and loaded to Snowflake by the Prefect flow. Grain: one row per event. This staging model casts types, normalizes timestamps to UTC, and adds pipeline metadata. customer_id is cast to VARCHAR to match stg_adventure_db__customers for downstream joins. Primary key: the combination of customer_id, session_id, and event_timestamp (deduplicated upstream by the Prefect flow). Used downstream by int_web_analytics_with_customers to enrich events with customer attributes.\n",
+[21:40:26]     "columns": {
+[21:40:26]       "customer_id": {
+[21:40:26]         "name": "customer_id",
+[21:40:26]         "description": "Identifier of the customer who performed this web event. Cast to VARCHAR to match stg_adventure_db__customers.customer_id. Foreign key to stg_adventure_db__customers — join to get customer name, email, and geography. Note: some customer_ids from the API may not match the customer dimension (the API can generate IDs outside the known range).\n",
+[21:40:26]         "meta": {},
+[21:40:26]         "data_type": null,
+[21:40:26]         "constraints": [],
+[21:40:26]         "quote": null,
+[21:40:26]         "config": {
+[21:40:26]           "meta": {},
+[21:40:26]           "tags": []
+[21:40:26]         },
+[21:40:26]        
+[21:40:26] 
+[21:40:26] Step 5: Compiling SQL for int_web_analytics_with_customers...
+[21:40:28]   Compiled SQL:
+[21:40:28]   OK
+[21:40:28] 
+[21:40:28] Step 6: Exploring lineage for stg_web_analytics...
+[21:40:29]   {
+[21:40:29]     "model_id": "model.adventure.stg_web_analytics",
+[21:40:29]     "parents": [
+[21:40:29]       {
+[21:40:29]         "model_id": "source.adventure.raw_ext.web_analytics_raw",
+[21:40:29]         "parents": []
+[21:40:29]       }
+[21:40:29]     ],
+[21:40:29]     "children": [
+[21:40:29]       {
+[21:40:29]         "model_id": "model.adventure.int_web_analytics_with_customers",
+[21:40:29]         "children": [
+[21:40:29]           {
+[21:40:29]             "model_id": "test.adventure.not_null_int_web_analytics_with_customers_customer_id.e646d9c00d",
+[21:40:29]             "children": []
+[21:40:29]           },
+[21:40:29]           {
+[21:40:29]             "model_id": "test.adventure.not_null_int_web_analytics_with_customers_session_id.5a321c31c7",
+[21:40:29]             "children": []
+[21:40:29]           }
+[21:40:29]         ]
+[21:40:29]       },
+[21:40:29]       {
+[21:40:29]         "model_id": "test.adventure.accepted_values_stg_web_analytics_event_type__page_view__click__add_to_cart__purchase.275e4ce214",
+[21:40:29]         "children": []
+[21:40:29]       },
+[21:40:29]       {
+[21:40:29]         "model_id": "test.adventure.not_null_stg_web_analytics_customer_id.f4557e81df",
+[21:40:29]         "children": []
+[21:40:29]       },
+[21:40:29]       {
+[21:40:29]         "model_id": "test.adventure.not_null_stg_web_analytics_event_timestamp.d6cdb78c4d",
+[21:40:29]         "children": []
+[21:40:29]       },
+[21:40:29]       {
+[21:40:29]         "model_id": "test.adventure.not_null_stg_web_analytics_event_type.bfec2f0848",
+[21:40:29]         "children": []
+[21:40:29]       },
+[21:40:29]       {
+[21:40:29]         "model_id": "test.adventure.not_null_stg_web_analytics_product_id.d425668593",
+[21:40:29]         "children": []
+[21:40:29]       },
+[21:40:29]       {
+[21:40:29]         "model_id": "test.adventure.not_null_stg_web_analytics_session_id.7ad4ac9996",
+[21:40:29]         "children": []
+[21:40:29]       },
+[21:40:29]       {
+[21:40:29]         "model_id": "test.adventure.relationships_stg_web_analytics_customer_id__customer_id__ref_stg_adventure_db__customers_.453b0
+[21:40:29] 
+[21:40:29] ============================================================
+[21:40:29] Demo complete!
+[21:40:29] ============================================================

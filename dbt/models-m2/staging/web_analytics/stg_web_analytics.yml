@@ -1,0 +1,81 @@
+version: 2
+
+models:
+  - name: stg_web_analytics
+    description: >
+      Each row represents one clickstream event from the Adventure Works website,
+      sourced from the REST API and loaded to Snowflake by the Prefect flow.
+      Grain: one row per event. This staging model casts types, normalizes
+      timestamps to UTC, and adds pipeline metadata. customer_id is cast to
+      VARCHAR to match stg_adventure_db__customers for downstream joins.
+      Primary key: the combination of customer_id, session_id, and event_timestamp
+      (deduplicated upstream by the Prefect flow). Used downstream by
+      int_web_analytics_with_customers to enrich events with customer attributes.
+    columns:
+      - name: customer_id
+        description: >
+          Identifier of the customer who performed this web event. Cast to VARCHAR
+          to match stg_adventure_db__customers.customer_id. Foreign key to
+          stg_adventure_db__customers — join to get customer name, email, and
+          geography. Note: some customer_ids from the API may not match the
+          customer dimension (the API can generate IDs outside the known range).
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_adventure_db__customers')
+                field: customer_id
+              config:
+                severity: warn
+      - name: product_id
+        description: >
+          Identifier of the product the customer interacted with during this event.
+          Foreign key to stg_adventure_db__products. Join to get product name,
+          category, and pricing.
+        data_tests:
+          - not_null
+      - name: session_id
+        description: >
+          Browser session identifier grouping all events from a single website
+          visit. Multiple events share the same session_id. Use session_id to
+          analyze user journeys and funnel progression within a visit.
+        data_tests:
+          - not_null
+      - name: page_url
+        description: >
+          Full URL of the page where this event occurred. Includes path and
+          query parameters. Useful for identifying which product pages, category
+          pages, or landing pages drive the most engagement.
+      - name: event_type
+        description: >
+          Type of customer interaction that triggered this event. Values:
+          page_view (customer viewed a page), click (customer clicked an element),
+          add_to_cart (customer added product to cart), purchase (customer
+          completed a purchase).
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['page_view', 'click', 'add_to_cart', 'purchase']
+      - name: event_timestamp
+        description: >
+          UTC timestamp of when this event occurred on the website. Stored as
+          TIMESTAMP_NTZ (no timezone). Primary time dimension for this model —
+          use for time-based analysis of browsing behavior and funnel timing.
+        data_tests:
+          - not_null
+      - name: _loaded_at
+        description: >
+          Timestamp when this row was loaded into Snowflake RAW_EXT.web_analytics_raw
+          by the Prefect flow's COPY INTO command. Populated by Snowflake's
+          DEFAULT CURRENT_TIMESTAMP() on the raw table.
+      - name: _file_name
+        description: >
+          Name of the staged CSV file that produced this row, set via
+          METADATA$FILENAME during COPY INTO. Useful for tracing data lineage
+          back to a specific Prefect flow run.
+      - name: dbt_loaded_at
+        description: >
+          Timestamp when dbt last materialized this staging table. Set to
+          CURRENT_TIMESTAMP() at dbt run time. Useful for monitoring pipeline
+          freshness at the transformation layer.

@@ -1,0 +1,46 @@
+version: 2
+
+sources:
+  - name: raw_ext
+    database: "{{ target.database }}"
+    schema: raw_ext
+    tables:
+      - name: web_analytics_raw
+        config:
+          loaded_at_field: event_timestamp
+          freshness:
+            warn_after: {count: 12, period: hour}
+            error_after: {count: 24, period: hour}
+        description: >
+          Raw clickstream events loaded from the Adventure Works Web Analytics REST API
+          by the Prefect flow. Each row is one user interaction event on the website.
+        columns:
+          - name: customer_id
+            description: Customer identifier. Links to stg_adventure_db__customers.
+            data_tests:
+              - not_null
+          - name: product_id
+            description: Product the customer interacted with.
+            data_tests:
+              - not_null
+          - name: session_id
+            description: Browser session identifier grouping events from one visit.
+            data_tests:
+              - not_null
+          - name: page_url
+            description: Full URL of the page where the event occurred.
+          - name: event_type
+            description: Type of interaction. One of page_view, click, add_to_cart, purchase.
+            data_tests:
+              - not_null
+              - accepted_values:
+                  arguments:
+                    values: ['page_view', 'click', 'add_to_cart', 'purchase']
+          - name: event_timestamp
+            description: UTC timestamp of when the event occurred.
+            data_tests:
+              - not_null
+          - name: _loaded_at
+            description: Timestamp when the row was loaded into Snowflake by COPY INTO.
+          - name: _file_name
+            description: Name of the staged CSV file that produced this row.
