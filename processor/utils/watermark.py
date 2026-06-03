@@ -1,4 +1,5 @@
 # metadata/watermark.py
+
 from datetime import datetime
 
 def get_watermark(source_id, pg_conn):

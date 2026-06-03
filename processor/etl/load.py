@@ -1,7 +1,7 @@
 # etl/load.py
 import os
-import time
 import tempfile
+import time
 
 def upload_dataframe_to_stage(df, label, stage_name, run_time, file_format="csv"):
     from utils.connections import get_snowflake_connection

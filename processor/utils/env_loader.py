@@ -1,6 +1,7 @@
 # utils/env_loader.py
-import os
 import argparse
+import os
+
 from dotenv import load_dotenv
 
 def load_environment():

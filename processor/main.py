@@ -1,8 +1,9 @@
 # Entry point: main.py
-from utils.env_loader import load_environment
-from datetime import datetime, timezone
-import time
 import os
+import time
+from datetime import UTC, datetime
+
+from utils.env_loader import load_environment
 
 load_environment()
 
@@ -21,7 +22,7 @@ def run_once():
     from utils.watermark import get_watermark, update_watermark
 
     cycle_start = time.time()
-    run_time = datetime.now(timezone.utc)
+    run_time = datetime.now(UTC)
     print(f"\n{'='*60}")
     print(f"[{run_time.isoformat()}] CYCLE START")
     print(f"{'='*60}")
@@ -93,7 +94,7 @@ def run_once():
         sf_conn.close()
 
     cycle_time = round(time.time() - cycle_start, 2)
-    print(f"\n[{datetime.now(timezone.utc).isoformat()}] CYCLE COMPLETE ({cycle_time} sec)")
+    print(f"\n[{datetime.now(UTC).isoformat()}] CYCLE COMPLETE ({cycle_time} sec)")
     print(f"{'='*60}\n")
 
 
