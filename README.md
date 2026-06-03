@@ -6,6 +6,7 @@
 ![Prefect](https://img.shields.io/badge/Prefect-2.x-024DFD?logo=prefect&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 ![dbt Tests](https://img.shields.io/badge/dbt_tests-28_passing-4CAF50)
+![Lint](https://github.com/Opie22/DataEngineeringSeniorProject/actions/workflows/lint.yml/badge.svg)
 
 > A production-style data platform that ingests from three heterogeneous sources (PostgreSQL, MongoDB, REST API), loads into Snowflake, transforms through dbt staging and intermediate layers with automated quality checks, orchestrates with Prefect, deploys via dbt Cloud CI/CD, and exposes models to AI agents through a dbt MCP server.
 
