@@ -16,9 +16,13 @@ ENABLE_CLEANUP = os.getenv("PROCESSOR_ENABLE_CLEANUP", "true").lower() == "true"
 # The extract section below is complete. Your job: implement the
 # COPY INTO and cleanup orchestration in the TODO section (Task 2).
 def run_once():
-    from etl.extract import extract_table_data, extract_chat_logs
-    from etl.load import upload_dataframe_to_stage, copy_stage_to_table, clean_stage
-    from utils.connections import get_postgres_connection, get_snowflake_connection, get_mongo_collection
+    from etl.extract import extract_chat_logs, extract_table_data
+    from etl.load import clean_stage, copy_stage_to_table, upload_dataframe_to_stage
+    from utils.connections import (
+        get_mongo_collection,
+        get_postgres_connection,
+        get_snowflake_connection,
+    )
     from utils.watermark import get_watermark, update_watermark
 
     cycle_start = time.time()

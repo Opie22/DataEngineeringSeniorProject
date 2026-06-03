@@ -2,6 +2,7 @@
 
 from datetime import datetime
 
+
 def get_watermark(source_id, pg_conn):
     """
     Retrieve the last export timestamp for a given source from Postgres metadata.

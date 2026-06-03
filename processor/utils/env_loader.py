@@ -4,6 +4,7 @@ import os
 
 from dotenv import load_dotenv
 
+
 def load_environment():
     """
     Parse command line for an --env argument and load environment variables.

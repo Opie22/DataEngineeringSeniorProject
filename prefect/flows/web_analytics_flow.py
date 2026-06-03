@@ -23,15 +23,15 @@ Environment variables (set in .env / Docker Compose env_file):
 """
 
 import os
-import time
 import tempfile
+import time
 from datetime import timedelta
 
 import pandas as pd
 import requests
 import snowflake.connector
 from dotenv import load_dotenv
-from prefect import flow, task, get_run_logger
+from prefect import flow, get_run_logger, task
 
 load_dotenv()
 

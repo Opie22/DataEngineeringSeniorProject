@@ -4,6 +4,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 from sqlalchemy import create_engine
 
+
 def extract_table_data(table_name, since):
     """
     Extract rows from a Postgres table optionally filtered by a high watermark.

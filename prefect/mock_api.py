@@ -10,9 +10,10 @@ Then test with:
 This returns 50 random clickstream events matching the expected API schema.
 """
 
-from flask import Flask, jsonify
-from datetime import datetime, timedelta
 import random
+from datetime import datetime, timedelta
+
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 
