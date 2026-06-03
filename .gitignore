@@ -22,3 +22,11 @@ __pycache__
 venv/
 mcp/.venv
 dbt/.user.yml
+
+# Portfolio reference files (keep locally, not for public repo)
+Portfolio Files/
+templates/
+screenshots/
+README-Milestone 1.md
+profile-README.md
+*.log

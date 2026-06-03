@@ -1,6 +1,11 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/7Tkgt8hQ)
-
 # Adventure Works Data Platform
+
+![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)
+![dbt](https://img.shields.io/badge/dbt-1.9-FF694B?logo=dbt&logoColor=white)
+![Snowflake](https://img.shields.io/badge/Snowflake-Cloud_Warehouse-29B5E8?logo=snowflake&logoColor=white)
+![Prefect](https://img.shields.io/badge/Prefect-2.x-024DFD?logo=prefect&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![dbt Tests](https://img.shields.io/badge/dbt_tests-28_passing-4CAF50)
 
 > A production-style data platform that ingests from three heterogeneous sources (PostgreSQL, MongoDB, REST API), loads into Snowflake, transforms through dbt staging and intermediate layers with automated quality checks, orchestrates with Prefect, deploys via dbt Cloud CI/CD, and exposes models to AI agents through a dbt MCP server.
 
@@ -111,8 +116,8 @@ Adventure Works operates across three disconnected systems: a PostgreSQL databas
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/byu-is-566/is-566-11-final-project-Opie22.git
-cd is-566-11-final-project-Opie22
+git clone https://github.com/Opie22/DataEngineeringSeniorProject.git
+cd DataEngineeringSeniorProject
 
 # 2. Configure environment
 cp .env.sample .env
@@ -173,7 +178,7 @@ Built a containerized multi-source ETL pipeline extracting from PostgreSQL (sale
 
 ### Milestone 2: Orchestration, Quality, and Agent-Assisted Development
 
-Added a third data source (REST API clickstream data) orchestrated by a Prefect 2.0 flow with four tasks: extract, validate, deduplicate, and load. The flow was built using an AI agent (Claude) with a PRD-driven development process; see [`prefect/agent_log.md`](prefect/agent_log.md). Added dbt models-m2 (`stg_web_analytics`, `int_web_analytics_with_customers`) and 28 data quality tests including source freshness checks and two custom SQL tests. Deployed dbt Cloud with a daily scheduled build and a CI/CD job that runs `dbt build` on every pull request.
+Added a third data source (REST API clickstream data) orchestrated by a Prefect 2.0 flow with four tasks: extract, validate, deduplicate, and load. The flow was built using a PRD-driven, AI-assisted process (Claude): I wrote [`prefect/prd.md`](prefect/prd.md) first to specify requirements before any code was generated, then directed the agent through structured implementation, overriding its initial DAG design (it omitted error handling and deduplication logic) and adding task-level retries manually. See [`prefect/agent_log.md`](prefect/agent_log.md) for the full interaction log including where AI output was corrected. Added dbt models-m2 (`stg_web_analytics`, `int_web_analytics_with_customers`) and 28 data quality tests including source freshness checks and two custom SQL tests. Deployed dbt Cloud with a daily scheduled build and a CI/CD job that runs `dbt build` on every pull request.
 
 ### Milestone 3: Agent Access and Portfolio
 
@@ -212,8 +217,49 @@ Building this platform across three milestones taught me that data engineering i
 
 ---
 
+## Project Structure
+
+```
+DataEngineeringSeniorProject/
+├── compose.yml                  # Docker Compose for all services
+├── .env.sample                  # Environment variable template
+├── Makefile                     # Standard dev commands
+├── sql/
+│   ├── create_raw_tables.sql    # Snowflake DDL for raw tables and stages
+│   └── check_data_flow_queries.sql
+├── processor/                   # Python ETL processor (Milestone 1)
+│   ├── main.py                  # Entry point
+│   ├── etl/
+│   │   ├── extract.py           # Watermark-based extraction from PG + Mongo
+│   │   └── load.py              # PUT + COPY INTO to Snowflake
+│   └── utils/
+│       ├── connections.py       # DB connection factories
+│       ├── watermark.py         # Watermark state management
+│       └── env_loader.py
+├── prefect/                     # Prefect orchestration (Milestone 2)
+│   ├── flows/
+│   │   └── web_analytics_flow.py  # 4-task flow: extract → validate → dedup → load
+│   ├── prd.md                   # Product requirements doc for the flow
+│   └── agent_log.md             # AI-assisted development log
+├── dbt/                         # dbt transformations
+│   ├── models-m1/               # Milestone 1 models (staging + intermediate)
+│   ├── models-m2/               # Milestone 2 models (web analytics)
+│   ├── tests/                   # 6 custom SQL data quality tests
+│   ├── seeds/                   # Reference data (measures, ship methods)
+│   ├── analyses/                # Ad-hoc analytical queries
+│   ├── AGENT_FRIENDLY_DOCS_GUIDE.md
+│   └── agent_access_reflection.md
+├── mcp/                         # dbt MCP server demo client (Milestone 3)
+│   └── demo_client.py           # Demonstrates 6 MCP capabilities
+├── screenshots/                 # Milestone evidence screenshots
+└── technical_decisions.md       # Key architectural decision log
+```
+
+---
+
 ## Related Documentation
 
+- [`technical_decisions.md`](technical_decisions.md): Key architectural decision log (watermarks, Prefect vs Airflow, COPY INTO, LEFT JOIN design, MCP approach)
 - [`prefect/prd.md`](prefect/prd.md): Product Requirements Document for the web analytics Prefect flow
 - [`prefect/agent_log.md`](prefect/agent_log.md): Agent interaction log for AI-assisted development
 - [`dbt/agent_access_reflection.md`](dbt/agent_access_reflection.md): Reflection on agent data access patterns

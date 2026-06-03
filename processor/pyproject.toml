@@ -9,4 +9,13 @@ dependencies = [
     "snowflake-connector-python>=3.5",
     "python-dotenv>=1.0",
     "sqlalchemy>=2.0",
+    "ruff>=0.4",
 ]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+ignore = ["E501"]
